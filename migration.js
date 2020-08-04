@@ -8,5 +8,5 @@ db.serialize(() => {
 
 db.serialize(() => {
     db.run('DROP TABLE IF EXISTS Series')
-    db.run('CREATE TABLE Series(id INTEGER NOT NULL PRIMARY KEY, name TEXT NOT NULL, description TEXT NOT NULL)')
+    db.run('CREATE TABLE Series (id INTEGER NOT NULL PRIMARY KEY, name TEXT NOT NULL, description TEXT NOT NULL)')
 })
