@@ -1,7 +1,7 @@
 const express = require('express')
 const sqlite3 = require('sqlite3')
 const seriesRouter = express.Router()
-const issuesRouter = require('./issues')
+const issuesRouter = require('./issues.js')
 
 
 const db = new sqlite3.Database(process.env.TEST_DATABASE || './database.sqlite')
@@ -79,5 +79,24 @@ seriesRouter.put('/:seriesId', validateSeries, (req, res, next) => {
 
 seriesRouter.use('/:seriesId/issues', issuesRouter)
 
+seriesRouter.delete('/:seriesId', (req, res, next) => {    
+    const issueSql = 'SELECT * FROM Issue where Issue.series_id = $seriesId'
+    const issuesValues = {$seriesId: req.params.seriesId}
+    db.get(issueSql, issuesValues, (err, issues) => {
+        if (err) {
+            next(err)
+        } else if (issues) {
+            res.sendStatus(400)
+        } else {
+            db.run(`DELETE FROM Series WHERE Series.id = ${req.params.seriesId}`, (err) => {
+                if (err) {
+                    next(err)
+                } else {
+                    res.sendStatus(204)
+                }
+            })
+        }
+    })      
+})
 
 module.exports = seriesRouter
